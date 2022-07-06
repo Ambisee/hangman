@@ -1,5 +1,6 @@
 # --- Modules --- #
 from PIL import ImageTk, Image
+import requests
 import os
 
 # --- Define Global Variable --- #
@@ -38,7 +39,19 @@ astronomy = ["MERCURY", "VENUS", "EARTH", "MARS", "JUPITER", "SATURN", "NEPTUNE"
 hard_words = ["MATRIX", "HIEROGLYPHS", "RICKSHAW", "ZEPHYR", "JAZZ", "QUIZZES", "QUINTESSENTIAL", "CRYPT", "SCHIZOPHRENIA",
               "PSYCHIC", "ZIPPER", "ZILCH", "MAGNANIMOUS"]
 
-topics = [animals, countries, astronomy, hard_words]
+
+# topics = [animals, countries, astronomy, hard_words]
+topics = {
+    'animals': animals, 
+    'countries': countries, 
+    'astronomy': astronomy, 
+    'hard_words': hard_words,
+    'random_words': '',
+}
+
+def get_random_word():
+    response = requests.get('https://random-words-api.vercel.app/word')
+    return response.json()[0]['word']
 
 # Images
 if not os.getcwd().endswith("Modules_Configs"):

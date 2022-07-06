@@ -45,10 +45,11 @@ class MainMenu:
 
         # WIDGETS
         self.label = Label(self.lblframe, text="Select at least one of the following topics.", font=("Calibri", 15))
-        self.animals = ListButton(self.r1, "Animals", lambda: self.add_list(config.animals, self.animals))
-        self.countries = ListButton(self.r1, "Countries", lambda: self.add_list(config.countries, self.countries))
-        self.astronomy = ListButton(self.r1, "Astronomy", lambda: self.add_list(config.astronomy, self.astronomy))
-        self.hard_words = ListButton(self.r2, "Hard Words", lambda: self.add_list(config.hard_words, self.hard_words))
+        self.animals = ListButton(self.r1, "Animals", lambda: self.add_list('animals', self.animals))
+        self.countries = ListButton(self.r1, "Countries", lambda: self.add_list('countries', self.countries))
+        self.astronomy = ListButton(self.r1, "Astronomy", lambda: self.add_list('astronomy', self.astronomy))
+        self.hard_words = ListButton(self.r2, "Hard\nWords", lambda: self.add_list('hard_words', self.hard_words))
+        self.random_words = ListButton(self.r2, "Random\nWords", lambda: self.add_list('random_words', self.random_words))
         self.add_all = ListButton(self.r2, "Add All", self.add_all)
         self.clear_bttn = Button(self.rl, text="Clear Selected Topic", width=20, command=self.clear)
         self.proceed = Button(self.rl, text="Proceed to Game", width=20, command=self.proceed)
@@ -58,6 +59,7 @@ class MainMenu:
         self.countries.pack(RIGHT, 5, 5)
         self.astronomy.pack(RIGHT, 5, 5)
         self.hard_words.pack(RIGHT, 5, 5)
+        self.random_words.pack(RIGHT, 5, 5)
         self.add_all.pack(RIGHT, 5, 5)
         self.clear_bttn.pack(side=RIGHT, padx=5, pady=10)
         self.proceed.pack(side=RIGHT, padx=5, pady=10)
@@ -77,35 +79,42 @@ class MainMenu:
         # MAINLOOP
         self.mwin.mainloop()
 
-    def add_list(self, list, bttn):
-        if not any(x in self.listpool for x in list):
+    def add_list(self, list_topic, bttn):
+        if list_topic not in self.listpool:
+            # The listpool doesn't have the topic included yet
             bttn.button['bg'] = "Green"
-            self.listpool.extend(list)
+            self.listpool.append(list_topic)
+
         elif self.add_all.button['bg'] == "Green":
+            # `Add All` option has been selected
             bttn.button['bg'] = "Green"
             self.add_all.button['bg'] = "Red"
             self.listpool.clear()
-            self.listpool.extend(list)
+            self.listpool.append(list_topic)
+
         else:
             bttn.button['bg'] = "Red"
-            for item in list:
-                self.listpool.remove(item)
+            self.listpool.remove(list_topic)
 
     def add_all(self):
         if self.add_all.button['bg'] == "Red":
+            # `Add All` is not selected
             self.listpool.clear()
-            for item in config.topics:
-                self.listpool.extend(item)
+            for topic in config.topics:
+                self.listpool.append(topic)
+
             for button in config.button_list:
                 button.button['bg'] = "Red"
             self.add_all.button['bg'] = "Green"
         else:
+            # `Add All` is already selected
             self.add_all.button.configure(bg="Red")
             self.listpool.clear()
 
     def clear(self):
         for button in config.button_list:
             button.button.configure(bg="Red")
+
         self.add_all.button.configure(bg="Red")
         self.listpool.clear()
 
@@ -119,7 +128,13 @@ class MainMenu:
             config.wordl = []
             config.image_num = 0
 
-            self.word = choice(self.listpool)
+            topic = choice(self.listpool)
+            
+            if topic != 'random_words':
+                self.word = choice(config.topics[topic])
+            else:
+                self.word = config.get_random_word().upper()
+
             for c in self.word:
                 if c == " ":
                     config.wordl.append(" ")
