@@ -1,0 +1,110 @@
+# MODULES IMPORTS
+import random
+import os
+
+# WORDS DATABASE
+animals = ["TIGER", "LION", "GIRAFFE", "BULL", "ELEPHANT", "FOX", "CAT", "DOG", "EAGLE", "MOUSE", "SHARK", "WHALE", "CHEETAH", "LEOPARD", "GRASSHOPPER", "SPIDER", "SQUID", "OCTOPUS", "SNAKE", "TURTLE", "TORTOISE", "PIGEON", "FALCON", "CHICKEN", "COW", "PIG", "DONKEY", "HORSE"]
+countries = ["INDONESIA", "MALAYSIA", "INDIA", "CHINA", "JAPAN", "FRANCE", "AUSTRALIA", "NEW ZEALAND", "CANADA", "UNITED STATES OF AMERICA", "ENGLAND", "IRELAND", "SINGAPORE", "THAILAND", "SOUTH KOREA", "EGYPT", "GREECE", "ITALY", "ZIMBABWE", "PORTUGAL", "PERU", "NEPAL"]
+astronomy = ["MERCURY", "VENUS", "EARTH", "MARS", "JUPITER", "SATURN", "NEPTUNE", "URANUS", "NEBULA", "THE MILKY WAY", "ANDROMEDA", "STAR", "MOON", "SOLAR SYSTEM", "GALAXY", "ASTEROID", "COMET", "METEORITE", "METEOR", "ORBIT", "OUTER SPACE", "CONSTELLATION", "PLUTO", "SUPERNOVA"] 
+hard_word = ["MATRIX", "VOYEURISM", "HIEROGLYPHS", "RICKSHAW", "ZEPHYR", "JAZZ", "QUIZZES", "QUINTESSENTIAL", "CRYPT", "PSYCHIC", "ZIPPER", "ZILCH"]
+
+# RETRY MECHANISMS
+retry = "Y"
+while retry == "Y":
+	
+	# USER INPUTS ON WORD CHOICES
+	os.system('cls')
+	choice = input("Which word categories would you like ( Animals, Countries, Astronomy, Hard Word, All ) ? : ")
+	choice = choice.title()
+	os.system('cls')
+	
+	# ERROR DETECTOR
+	while any(x in choice for x in ["Animals", "Countries", "Astronomy", "Hard Word", "All"]) == False:
+		print("! Error, please enter at least one of the items for the choices !")
+		print("-----------------------------------------------------------------")
+		choice = input("Which word categories would you like ( Animals, Countries, Astronomy, Hard Word, All ) ? : ")
+		choice = choice.title()
+		os.system('cls')
+
+	# ESTABLISH THE LIST FOR RANDOMIZING
+	x = []
+	if choice.find("All") != -1:
+		x = x + animals + countries + astronomy + hard_word
+	else:		
+		if choice.find("Animals") != -1:
+			x = animals
+		else:
+			x = x
+
+		if choice.find("Countries") != -1:
+			x = x + countries
+		else:
+			x = x
+		if choice.find("Astronomy") != -1:
+			x = x + astronomy
+		else:
+			x = x
+		if choice.find("Hard Word") != -1:
+			x = x + hard_word
+		else:
+			x = x
+	
+
+	# SELECTING WORD FROM THE LIST AND CREATING THE GAMEBOARD
+	word = random.choice(x)
+	word_list = []
+	for l in word:
+		word_list.append(l)
+	gameboard = []
+	for i in word:
+		if i == " ":
+			gameboard.append(" ")
+			continue
+		gameboard.append("_")
+	
+	# GAME STARTS
+	retries = 6
+	letters = []
+	
+	while gameboard != word_list and retries >= 0:
+		print(gameboard)
+		print("You've inserted : ", letters)
+		print("Retries = ", retries)	
+		p_input = input("Enter a letter : ")
+		p_input = p_input.capitalize()
+		letters.append(p_input)	
+		if p_input == "":
+			os.system('cls')
+			continue		
+		if p_input not in word:
+			retries -= 1
+			os.system('cls')
+			print("That letter is not in the word.")
+		if p_input in word:
+			num = 0
+			while True:
+				try:
+					num = word.index(p_input, num)
+					gameboard[num] = word[num]
+					num = num + 1
+				except ValueError:
+					os.system('cls')
+					break
+	if gameboard == word_list:
+		print(gameboard)
+		print("Congratulations, you won !")
+		print("The word = ", word)
+	
+	else:
+		print(gameboard)	
+		print("You've lost !")
+		print("The word = ", word)
+
+	retry = input("Would you like to try again ? ( Y / N ) : ")
+	retry = retry.upper()
+	
+	while retry not in ["Y", "N"]:
+		print("! Error, please input one of the choices !")
+		print("------------------------------------------")
+		retry = input("Would you like to try again ? ( Y / N ) : ")
+		retry = retry.upper()
